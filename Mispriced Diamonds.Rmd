@@ -1,0 +1,245 @@
+---
+title: "1st Assignment"
+author: "Sejal Dhanta"
+date: "2026-02-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction - R
+
+R is based on an original set of notes describing the S and S-Plus
+environments, written in 1990–1992 by Bill Venables and David M. Smith
+while at the University of Adelaide.
+
+R is an integrated suite of software facilities for data manipulation,
+calculation and graphical display. Among other things it has
+
+• an effective data handling and storage facility,
+
+• a suite of operators for calculations on arrays, in particular
+matrices,
+
+• a large, coherent, integrated collection of intermediate tools for
+data analysis,
+
+• graphical facilities for data analysis, and
+
+• a well-developed, simple, and effective programming language (called
+‘S’) which includes conditionals, loops, user defined recursive
+functions and input and output facilities.
+
+### Vectors and assignment 
+
+R operates on named data structures. The simplest such structure is the numeric vector, which 
+is a single entity consisting of an ordered collection of numbers. To set up a vector named x, 
+say, consisting of five numbers, namely 10.4, 5.6, 3.1, 6.4 and 21.7, use the R command 
+
+```{r}
+x  <- c(10.4, 5.6, 3.1, 6.4, 21.7)
+```
+This is an assignment statement using the function c() which in this context can take an 
+arbitrary number of vector arguments and whose value is a vector got by concatenating its 
+arguments end to end. 
+Notice that the assignment operator (‘<-’), which consists of the two characters ‘<’ (“less 
+than”) and ‘-’ (“minus”) occurring strictly side-by-side and it ‘points’ to the object receiving 
+the value of the expression. 
+The further assignment 
+y <- c(x, 0, x) 
+would create a vector y with 11 entries consisting of two copies of x with a zero in the middle 
+place.
+
+### Data permanency and removing objects
+The entities that R creates and manipulates are known as objects. These may be variables, 
+arrays of numbers, character strings, functions, or more general structures built from such 
+components. 
+During an R session, objects are created and stored by name. The collection of objects 
+currently stored is called the workspace. 
+To remove objects the function rm is available 
+
+```{r,eval=FALSE}
+rm(x, y, z, ink, junk, temp, foo) 
+rm(x)
+```
+
+### Generating regular sequences 
+
+R has a number of facilities for generating commonly used sequences of numbers. The 
+function seq() is a more general facility for generating sequences. 
+For example
+
+```{r, eval=FALSE}
+1:30 is the vector c(1, 2, ..., 29, 30). 
+```
+
+### Project 1: Mispriced Diamonds 
+
+In the given data set, all rows represent Diamond with three columns namely carat (weight), 
+
+clarity and price (price at which diamond is sold). 
+
+More than 50,000 transactions are recorded in the file. High clarity Diamond is priced high!? 
+
+Does the relationship between price and clarity always hold true? 
+Let’s go and investigate! 
+
+Step 1: Run the below line in Script
+
+mydata <- read.csv(file.choose())
+
+```{r}
+mydata <- read.csv(file.choose()) 
+```
+
+It allows you to select your csv file and load data into RStudio 
+
+Step 2: Install Package “ggplot2” by running below line in script. It helps to visualize the data 
+
+```{r,eval=FALSE}
+install.packages("ggplot2")
+```
+Once you run the program, your RStudio will connect to the internet and start downloading 
+the said package for you. 
+After installation of package, make sure you ‘activate’ ggplot2 under packages 
+
+Step 3: Scatter Plot - Run the below line
+
+```{r}
+library(ggplot2)
+ggplot(data=mydata, aes(x=carat, y=price)) +   geom_point()
+```
+
+This gives the scatter plot for Diamonds. All the records are illustrated in the plot. But there 
+is no ‘clarity’ variable. 
+This gives the scatter plot for Diamonds. All the records are illustrated in the plot. But there 
+is no ‘clarity’ variable. 
+
+Step 4: Now, you can add ‘clarity’ variable as color. Run below line
+
+```{r}
+ggplot(data=mydata, aes(x=carat, y=price,  color=clarity)) +  geom_point()
+```
+
+Step 5: The scatter plot has got many clumsy points and not so clear. To make it more clear 
+run below line
+
+```{r}
+ggplot(data=mydata, aes(x=carat, y=price,  color=clarity)) +   geom_point(alpha=0.1) 
+```
+
+Step 6: It seems to be clear but scatter plot is having all the records irrespective of significant 
+and not significant. Therefore, let’s filter out the data now with the condition on clarity. Run 
+below line
+
+```{r}
+ggplot(data=mydata[mydata$carat < 2.5,], aes(x=carat, y=price, color=clarity)) + geom_point(alpha=0.1) 
+```
+
+Variable ‘carat’ records with only less than 2.5 values are considered in the above 
+visualization. This is much clear! 
+Step 7: To see the averages for a variable ‘carat’ run below line
+
+```{r}
+ggplot(data=mydata[mydata$carat < 2.5,],   aes(x=carat, y=price, color=clarity)) +  
+geom_point(alpha=0.1) + geom_smooth() 
+```
+
+### Key Interpretation
+
+#### 1. Strong positive relationship between carat and price
+
+As carat size increases, the price of diamonds increases sharply.
+
+The relationship is non-linear: price rises slowly at lower carats and accelerates after ~1 carat.
+
+Interpretation: Larger diamonds command disproportionately higher prices.
+
+#### 2. Clarity significantly affects price at the same carat
+
+For the same carat value, diamonds with higher clarity grades (VVS1, VVS2, IF) are priced higher.
+
+Lower clarity diamonds (especially I1) consistently lie at the bottom price range.
+
+Interpretation: Clarity is a strong premium factor independent of size.
+
+#### 3. Premium gap widens as carat increases
+
+At low carat (<0.5), price differences across clarity grades are relatively small.
+
+At higher carats (>1.5), price differences between clarity grades become much wider.
+
+Interpretation: Clarity matters more for large diamonds than small ones.
+
+#### 4. IF and VVS grades show the highest price curves
+
+IF (Internally Flawless) and VVS1/VVS2 have the steepest and highest smooth curves.
+
+These diamonds show strong price appreciation with increasing carat.
+
+Interpretation: High-clarity diamonds scale better in value as size increases.
+
+#### 5. SI1 and SI2 lie in the mid-price segment
+
+SI1 and SI2 diamonds form a middle band between premium (VVS/IF) and low clarity (I1).
+
+Their growth trend is positive but less steep.
+
+Interpretation: These categories offer a balance between affordability and quality.
+
+#### 6. I1 clarity diamonds are consistently discounted
+
+I1 diamonds show lowest prices across all carat sizes.
+
+Even at higher carats, I1 does not catch up with higher clarity grades.
+
+Interpretation: Poor clarity strongly limits price potential, regardless of size.
+
+#### 7. Price variability increases with carat
+
+At higher carats, points are more spread out vertically.
+
+This indicates greater price dispersion due to combined effects of clarity, cut, and other attributes.
+
+Interpretation: Large diamonds have more complex pricing dynamics.
+
+### Business Insights
+##### 1.Carat size is the main driver of revenue
+Prices increase sharply with carat size, especially for larger diamonds.
+
+Decision: Prioritize sourcing and marketing higher-carat diamonds to drive overall revenue growth.
+
+##### 2.Clarity strongly influences pricing at the same carat
+Higher clarity diamonds consistently command higher prices than lower clarity diamonds of equal size.
+
+Decision: Use clarity-based pricing tiers and clearly differentiate products by clarity grade.
+
+##### 3.Clarity impact increases for diamonds above one carat
+Price gaps between clarity grades widen significantly for larger diamonds.
+
+Decision: For diamonds above one carat, focus on higher clarity grades to maximize returns.
+
+##### 4.High-clarity diamonds deliver superior margins
+IF and VVS diamonds show faster price appreciation compared to other grades.
+
+Decision: Position IF and VVS diamonds as premium offerings and allocate more inventory budget to these categories.
+
+##### 5.Mid-clarity diamonds support volume sales
+SI1 and SI2 diamonds offer a balance of price and quality and likely generate higher sales volumes.
+
+Decision: Maintain strong inventory levels of SI1 and SI2 diamonds to ensure stable cash flow.
+
+##### 6.Low-clarity diamonds serve price-sensitive customers
+I1 clarity diamonds remain consistently low-priced, even at higher carats.
+
+Decision: Limit exposure to large I1 diamonds and use them mainly as entry-level products.
+
+##### 7.Diamond pricing follows a non-linear pattern
+Price does not increase evenly with carat; it depends on both carat and clarity together.
+
+Decision: Implement non-linear pricing models and optimize inventory mix based on combined carat-clarity analysis.
+
+### Conclusion
+Overall, the analysis shows that carat size drives demand and revenue, while clarity determines price differentiation and profitability. The impact of clarity becomes significantly stronger for larger diamonds, making high-clarity, high-carat stones the key contributors to premium margins. Mid-clarity diamonds support stable sales volumes, while low-clarity diamonds primarily serve price-sensitive customers. Therefore, effective business decisions should focus on non-linear pricing strategies, optimized inventory allocation, and clear market segmentation to balance revenue growth, profitability, and risk.
